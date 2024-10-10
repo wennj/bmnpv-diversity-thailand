@@ -58,7 +58,7 @@ The correlation can also be checked for all CDS individually. The alignments of 
 
 The alignments of all 138 CDSs of the fully sequenced genomes also allowed the genetic K2P distance to be considered at the level of individual CDSs. This was done by calculating the K2P distance for each CDS and displaying the result in a matrix. It was also possible to check whether there was a correlation between geographical and genetic distance.
 
-[Click here for the R code used to create the figure.](CDS k2p distance analysis.Rmd)
+[Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/CDS%20k2p%20distance%20analysis.Rmd)
 
 <img src="output/cds analysis/k2p_combined_ALL.png" width="40%"/>
 
