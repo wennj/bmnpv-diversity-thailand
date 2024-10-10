@@ -16,4 +16,4 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 
 [Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
 
-![Figure: Map of Thailand](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png)
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map of Thailand with BmNPV locations" width="50%"/>
