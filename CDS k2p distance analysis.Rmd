@@ -1,0 +1,422 @@
+---
+title: "CDS k2p distance analysis"
+author: "Jörg Wennmann"
+date: "2024-10-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Libraries
+
+```{r include=FALSE}
+library(Biostrings)
+library(ape)
+library(geosphere)
+library(ggplot2)
+library(ggtext)
+library(RColorBrewer)
+library(stringr)
+library(devtools)
+library(VariantAnnotation)
+library(patchwork)
+
+'%ni%' <- Negate('%in%')
+```
+
+# Create correlation dataframe
+
+## Basic gene and genome information
+
+```{r}
+gene_annotation <- structure(list(annotation = c("polh", "orf1629", "pk-1", "bm4", 
+"bm5", "lef-1", "egt", "odv-e26", "bm9", "bm10", "bm11", "arif-1", "pif-2", 
+"f-protein", "pkip", "dbp", "bm17", "iap-1", "lef-6", "bm20", "bm21", "bro-a", 
+"sod", "fgf", "bm25", "ubiquitin", "pp31", "lef-11", "bv-e31", "p43", 
+"p47", "lef-12", "gta", "bm34", "bm35", "bm36", "odv-e66", "ets", "lef-8", 
+"bm40", "bm41", "ac53", "lef-10", "vp1054", "bm45", "bm46", "bm47", "bm48", "bm49", "fp25", 
+"lef-9", "bm52", "gp37", "dnapol", "desmo", "lef-3", "pif-6", "bm58", 
+"iap-2", "bm60", "bm61", "bm62", "ac75", "bm64", "vlf-1", "ac78", "bm67", "gp41", 
+"ac81", "tlp", "vp91", "vp15", "cg30", "vp39", "lef-4", "bm76", "p33", 
+"p18", "odv-e25", "helicase", "pif-4", "bro-c", "38k", "lef-5", 
+"p6.9", "p40", "p12", "p48", "vp80", "he65", "ac106/107", "ac108", 
+"odv-ec43", "ac110", "bm95", "bm96", "pif-3", "bm98", "bm99", "pif-1", "bm101", "bm102", 
+"bm103", "gcn2", "bm105", "lef-7", "chitinase", "v-cath", "gp64", "p24", 
+"gp16", "pp34", "bm113", "alkexo", "p35", "p26", "p10", "p74", "me53", 
+"bm120", "ie-0", "p49", "odv-e18", "odv-ec27", "ac145", "ac146", "ie-1", 
+"pif-5", "bm129", "bm130", "ie-2", "pe38", "bm133", "ptp", "bro-d", "bm136", "bm137", 
+"lef-2"), core_gene = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, 
+FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, 
+FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, 
+FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, 
+FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)), class = "data.frame", row.names = c(NA, 
+-138L))
+
+func <- c(
+  "struc", "struc", "struc", "unknown", "unknown", "reg", "aux", "struc", "unknown", "unknown",
+  "unknown", "aux", "struc", "struc", "aux", "reg", "unknown", "reg", "reg", "unknown", "unknown",
+  "unknown", "aux", "aux", "unknown", "aux", "reg", "reg", "struc", "unknown", "reg", "reg", 
+  "unknown", "unknown", "unknown", "unknown", "struc", "unknown", "reg", "unknown", "unknown",
+  "unknown", "aux", "struc", "unknown", "unknown", "unknown", "unknown", "unknown", "struc",
+  "reg", "unknown", "aux", "reg", "struc", "reg", "struc", "unknown", "aux", "unknown", "unknown",
+  "unknown", "unknown", "unknown", "aux", "unknown", "unknown", "struc", "unknown", "aux", "struc",
+  "struc", "unknown", "struc", "reg", "unknown", "struc", "unknown", "struc", "reg", "struc",
+  "unknown", "struc", "reg", "struc", "struc", "struc", "struc", "struc", "aux", "unknown",
+  "unknown", "unknown", "unknown", "unknown", "unknown", "struc", "unknown", "unknown", "struc",
+  "unknown", "unknown", "unknown", "unknown", "unknown", "reg", "aux", "aux", "struc", "struc",
+  "struc", "struc", "unknown", "aux", "aux", "aux", "aux", "struc", "unknown", "unknown", "reg",
+  "struc", "struc", "struc", "struc", "struc", "reg", "struc", "unknown", "unknown", "reg", "reg",
+  "unknown", "struc", "unknown", "unknown", "unknown", "reg"
+)
+
+func2 <- c(
+  "struc", "struc", "struc", " ", " ", "reg", "aux", "struc", " ", " ",
+  " ", "aux", "struc", "struc", "aux", "reg", " ", "reg", "reg", " ", " ",
+  " ", "aux", "aux", " ", "aux", "reg", "reg", "struc", " ", "reg", "reg", 
+  " ", " ", " ", " ", "struc", " ", "reg", " ", " ",
+  " ", "aux", "struc", " ", " ", " ", " ", " ", "struc",
+  "reg", " ", "aux", "reg", "struc", "reg", "struc", " ", "aux", " ", " ",
+  " ", " ", " ", "aux", " ", " ", "struc", " ", "aux", "struc",
+  "struc", " ", "struc", "reg", " ", "struc", " ", "struc", "reg", "struc",
+  " ", "struc", "reg", "struc", "struc", "struc", "struc", "struc", "aux", " ",
+  " ", " ", " ", " ", " ", "struc", " ", " ", "struc",
+  " ", " ", " ", " ", " ", "reg", "aux", "aux", "struc", "struc",
+  "struc", "struc", " ", "aux", "aux", "aux", "aux", "struc", " ", " ", "reg",
+  "struc", "struc", "struc", "struc", "struc", "reg", "struc", " ", " ", "reg", "reg",
+  " ", "struc", " ", " ", " ", "reg"
+)
+
+genomeData <- structure(list(NAME_1 = c("Roi Et", "Bueng Kan", "Ubon Ratchathani", 
+"Buri Ram", "Surin", "Udon Thani", "Si Sa Ket", "Amnat Charoen", 
+"Loei", "Nong Khai", "Khon Kaen", "Sakon Nakhon", "Maha Sarakham", 
+"Chaiyaphum", "Nakhon Ratchasima", "Chiang Rai", "Kanchanaburi", 
+"Uthai Thani", "Ratchaburi", "Narathiwat", "Chumphon"), NAME_2 = c("Pho Chai", 
+"Pak Khat", "Buntharik", "Phutthaisong", "Muang Surin", "Kumphawapi", 
+"Huai Thap Than", "Phana", "Wang Saphung", "Phon Phisai", "Chum Phae", 
+"Wanon Niwat", "Yang Si Surat", "Phu Khieo", "Phimai", "Pa Daet", 
+"Muang Kanchanaburi", "Ban Rai", "Suan Phung", "Muang Narathiwat", 
+"Sawi"), genomeAbbr = c("Th1", "Th2", "Th3", "Th4", "Th5", "Th6", 
+"Th7", "Th8", "Th9", "Th10", "Th11", "Th12", "Th13", "Th14", 
+"Th15", "Th16", "Th17", "Th18", "Th19", "Th20", "Th21"), NAME_1_Cols = c("black", 
+"purple", "black", "purple", "black", "black", "black", "black", 
+"black", "black", "black", "purple", "purple", "black", "purple", 
+"purple", "black", "purple", "black", "purple", "black"), NAME_2_Cols = c("black", 
+"black", "black", "black", "black", "black", "black", "black", 
+"black", "black", "black", "black", "black", "black", "black", 
+"black", "black", "black", "black", "black", "black"), latitude = c(16.323611, 
+18.298333, 14.756667, 15.548333, 14.881667, 17.113889, 15.05, 
+15.683333, 17.301667, 18.021944, 16.544167, 17.632222, 15.69, 
+16.376389, 15.220556, 19.504167, 14.003333, 15.083889, 13.543333, 
+6.426111, 10.253056), longitude = c(103.769167, 103.306667, 105.411389, 
+103.025, 103.493333, 103.018611, 104.023333, 104.846667, 101.768333, 
+103.077222, 102.099722, 103.751944, 103.103333, 102.128611, 102.485833, 
+99.993056, 99.55, 99.521111, 99.34, 101.823056, 99.094444), Shape = c(25, 
+25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 
+25, 25, 25, 25)), row.names = c(NA, -21L), class = "data.frame")
+
+#Beschränke die Genomdaten auf die Isolate, die vollständig sequenziert wurden.
+genomeData <- subset(genomeData, genomeAbbr %in% c("Th2", "Th16", "Th13", "Th15", "Th4", "Th18", "Th20", "Th12"))
+```
+
+## Read genetic and geographic distance matrices
+
+```{r}
+geo_dist_matrix <- read.csv("output/distance matrix/geo_dist_matrix.csv", row.names = 1)
+geo_dist_matrix <- as.matrix(geo_dist_matrix)
+
+k2p_matrix <- read.csv("output/distance matrix/k2p_matrix.csv", row.names = 1)
+k2p_matrix <- as.matrix(k2p_matrix)
+```
+
+## Calculate Pearson correlation vavlues
+
+```{r}
+# Function to calculate the Pearson correlation and p-value for an alignment
+calculate_correlation <- function(file_path, 
+                                  geo_dist_matrix,
+                                  genome_data, 
+                                  isolate = c("Th2", "Th4", "Th12", "Th13", "Th15", "Th16", "Th18", "Th20")) {
+
+    # Read the sequences
+    sequences <- read.dna(file = file_path, format = "fasta")
+    sequences <- sequences[isolate, ]
+    
+    # Calculate the genetic distance
+    genetic_distances <- dist.dna(sequences, model = "K80")
+    genetic_matrix <- as.matrix(genetic_distances)
+  
+    # Prepare the data for comparison
+    combo_data <- expand.grid(seq1 = genome_data$genomeAbbr, seq2 = genome_data$genomeAbbr)
+    combo_data <- combo_data[combo_data$seq1 != combo_data$seq2, ]
+    vals <- unique(combo_data$seq1)
+    combo_data <- combn(vals, 2)
+    combo_data <- data.frame(seq1 = combo_data[1,], seq2 = combo_data[2,])
+    
+    combo_data$genetic_dist <- mapply(function(x, y) genetic_matrix[x, y], combo_data$seq1, combo_data$seq2)
+    combo_data$geo_dist <- mapply(function(x, y) geo_dist_matrix[match(x, genome_data$genomeAbbr), 
+                                                                 match(y, genome_data$genomeAbbr)], 
+                                   combo_data$seq1, combo_data$seq2)
+  
+    # Calculate the Pearson correlation
+    correlation_result <- cor.test(combo_data$genetic_dist, combo_data$geo_dist, method = "pearson")
+    
+    # Return results as a vector
+    results_return <- c(correlation_result$estimate, correlation_result$p.value, correlation_result$parameter, correlation_result$statistic, correlation_result$conf.int)
+    
+    return(results_return)
+}
+
+# Path to the folder with the alignments
+folder_path <- "data/alignments/individual/"
+
+# List all files in the folder
+alignment_files <- list.files(folder_path, full.names = TRUE)
+
+# Calculate correlations for all files
+correlations <- t(sapply(alignment_files, calculate_correlation, geo_dist_matrix = geo_dist_matrix, genome_data = genomeData))
+
+# Convert to a DataFrame and add file names and other values
+correlations_df <- data.frame(
+  FileName = basename(alignment_files),
+  P_Value = correlations[, 2],
+  Correlation_Coefficient = correlations[, 1],
+  Degrees_of_Freedom = correlations[, 3],
+  T_Value = correlations[, 4],
+  Conf_Interval_Lower = correlations[, 5],
+  Conf_Interval_Upper = correlations[, 6]
+)
+
+# Remove rownames
+rownames(correlations_df) <- NULL
+
+# Order the dataframe by Correlation_Coefficient
+correlations_df <- correlations_df[order(-correlations_df$Correlation_Coefficient), ]
+
+# Display the results
+print(correlations_df)
+
+```
+
+## Read Gene Names from Alignment file
+
+```{r}
+# Extrahieren der Zahlen aus den Dateinamen
+number_vector <- sapply(correlations_df$FileName, function(name) {
+  matches <- regmatches(name, regexpr("_-([0-9]+)", name))
+  if (length(matches) > 0) {
+    as.numeric(sub("_-", "", matches))
+  } else {
+    NA  # Für den Fall, dass kein Match gefunden wird
+  }
+})
+
+#add the vector to the df
+correlations_df <- cbind(correlations_df, number_vector)
+#order the df by the number_vector column
+correlations_df <- correlations_df[order(correlations_df$number_vector), ]
+
+#extract gene names and add to df
+correlations_df$gene_name <- str_extract(correlations_df$FileName, "(?<=Th2_).+?(?=_CDS)")
+
+print(correlations_df)
+```
+
+## Merge information to final dataframe
+
+```{r}
+correlations_df <- cbind(correlations_df, gene_annotation)
+
+correlations_df$func <- func
+```
+
+## Edit annotation for axis labels in italics
+
+```{r}
+correlations_df[is.na(correlations_df)] <- 0
+
+# Create a helper vector for formatting the Y-axis labels
+# Conditional bold formatting and additionally italicize all labels
+label_styles <- ifelse(correlations_df$core_gene, "<b><i>%s</i></b>", "<i>%s</i>")
+formatted_labels <- sprintf(label_styles, correlations_df$annotation)
+```
+
+
+#---------
+
+
+# K2P Analysis (ALL BmNPV)
+
+## K2P Distance of ORFs
+
+```{r}
+compare_to_isolate <- "Th13"
+
+# Pfad zu Ihren Fasta-Dateien
+path_to_files <- "data/alignments/individual/"
+
+# Liste der Fasta-Dateien
+fasta_files <- list.files(path_to_files, pattern = "\\.fasta$", full.names = TRUE)
+
+# Initialisierung eines leeren DataFrames
+dist_df <- data.frame()
+
+# Schleife über alle Fasta-Dateien
+for (file in fasta_files) {
+  
+  alignment <- read.dna(file, format = "fasta")
+  
+  th12_seq <- alignment[compare_to_isolate, ]
+  #other_seqs <- alignment[rownames(alignment) != compare_to_isolate, ]
+  other_seqs <- alignment
+
+  for (seq_name in rownames(other_seqs)) {
+    #dist_value <- dist.dna(cbind(th12_seq, other_seqs[seq_name, ]), model = "K80")
+    dist_value <- dist.dna(alignment[c(compare_to_isolate, seq_name),], model = "K80")
+    dist_df <- rbind(dist_df, data.frame(File = basename(file), Sequence = seq_name, Distance = as.numeric(dist_value)))
+  }
+}
+
+# Umwandeln des DataFrames in ein Format für ggplot
+heatmap_data <- melt(dist_df, id.vars = c("File", "Sequence"), value.name = "Distance")
+
+heatmap_data$File <- factor(heatmap_data$File, levels = rev(correlations_df$FileName))
+heatmap_data$Sequence <- factor(heatmap_data$Sequence, levels = c("AcMNPV-C6", "BmNPV-S2", 
+"BmNPV-cubic", "BmNPV-C2", "BmNPV-C6", "BmNPV-C1", "BmNPV-Baoshan", "BmNPV-La", 
+"BmNPV", "BmNPV-T3", "BmNPV-Zhejiang", "BmNPV-Brazil", "BmNPV-H4", "BmNPV-Guangxi", 
+"BmNPV-Hakozaki", "BmNPV-S1", "BmNPV-My", "BmNPV-India", "Th12", 
+"Th18", "Th20", "Th16", "Th2", "Th15", 
+"Th4", "Th13"))
+
+manual_labels_x <- levels(heatmap_data$Sequence)
+# Entferne "BmNPV-" aus dem Vektor
+manual_labels_x_clean <- gsub("BmNPV-", "", manual_labels_x)
+
+#Die Reihenfolge der Gene in der Heatmpa wird über levels von heatmap_data$File festgelegt
+
+# Erstellen der Heatmap
+p11 <- ggplot(heatmap_data, aes(x = Sequence, y = File, fill = Distance)) +
+  geom_tile(color = "black") +
+  #scale_fill_gradient(low = "blue", high = "red") +
+  #scale_fill_gradient2(low = "blue", mid = "pink", high = "red", midpoint = 0.11) + 
+  scale_fill_gradient2(low = "blue", mid = "hotpink1", high = "goldenrod4", midpoint = 0.15, 
+                       breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3),
+                       labels = c(0, " ", 0.1, " ", 0.2, " ", 0.3),
+                       limits = c(0, 0.3)) +  # Setze die Grenzen der Farbskala
+  scale_y_discrete(labels = rev(formatted_labels)) + 
+  scale_x_discrete(labels = manual_labels_x_clean) +
+  theme_minimal() +
+  labs(x = "BmNPV Isolate", y = " ", fill = "A: K2P distance") +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.text.y = element_markdown()  # Verwenden von element_markdown für die Y-Achse
+  )
+
+
+dpi <- 300
+f <- 1.5
+
+#default
+h <- 8*f
+w <- 25*f
+
+print(p11)
+ggsave(filename = "k2p_orf_distance_analysis.png",   path = "output/cds analysis", plot = p11, height = w, width = h, units = "cm", dpi = dpi, device = "png")
+```
+
+## Visualisation with discrete K2P species borders
+
+```{r}
+#Zuordnung der Farben basierend auf den Distance-Werten
+heatmap_data$Color <- cut(heatmap_data$Distance, 
+                          breaks = c(-Inf, 0.015, 0.021, 0.05, 0.072, Inf), 
+                          labels = c("green", "yellow", "orange", "red", "grey"))
+
+p12 <- ggplot(heatmap_data, aes(x = Sequence, y = File, fill = Color)) +
+  geom_tile(color = "black") +  # Schwarzer Rahmen um jede Kachel
+  scale_fill_manual(
+    values = c("green" = "green", "yellow" = "yellow", "orange" = "orange", "red" = "red", "grey" = "grey"),
+    labels = c("< 0.015", "< 0.021", "< 0.05", "< 0.072", "≥ 0.072"),  # Angepasste Labels für die Farben
+    guide = guide_legend(reverse = T)
+  ) +
+  #scale_y_discrete(labels = rev(formatted_labels)) + 
+  #scale_y_discrete(labels = "" ) + 
+  scale_y_discrete(labels = rev(func2)) +
+  scale_x_discrete(labels = manual_labels_x_clean) +
+  theme_minimal() +
+  labs(x = "BmNPV Isolate", y = " ", fill = "B: K2P distance") +  # Die Legende wird hier angepasst
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.text.y = element_markdown()  # Verwenden von element_markdown für die Y-Achse
+  )
+
+print(p12)
+
+dpi <- 300
+f <- 1.5
+
+#default
+h <- 8*f
+w <- 25*f
+
+ggsave(filename = "k2p_orf_distance_analysis_discrete.png",   path = "output/cds analysis/", plot = p12, height = w, width = h, units = "cm", dpi = dpi, device = "png")
+
+```
+
+```{r}
+# Erstellen des Plots
+p4 <- ggplot(correlations_df, aes(x = Correlation_Coefficient, y = reorder(rev(number_vector), rev(number_vector)), fill = P_Value < 0.05)) +
+  geom_bar(stat = "identity") +
+  #scale_fill_manual(values = c("TRUE" = brewer.pal(11, "RdYlGn")[9], "FALSE" = "darkgrey")) +
+  scale_fill_manual(values = c("TRUE" = "blue", "FALSE" = "darkgrey"),
+                    guide = guide_legend(reverse = T)) +
+  labs(x = "Pearson Correlation Coefficient", y = "", fill = "C: p < 0.05") +
+  scale_x_continuous(limits = c(-0.4, 1), breaks = seq(-0.4, 1, by = 0.2)) +
+  scale_y_discrete(breaks = correlations_df$number_vector, labels = rev(formatted_labels)) +
+  theme_bw() +
+  theme(panel.grid.major.y = element_blank(),  # Keine horizontalen Grid-Linien
+        panel.grid.major.x = element_line(color = "grey80", linewidth = 0.2),  
+        panel.grid.minor.x = element_blank(),  # Entferne kleine vertikale Grid-Linien
+        axis.line = element_line(colour = "black"),
+        panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        legend.position = "none",
+        axis.text.y = element_markdown())
+
+dpi <- 300
+f <- 1.5
+
+#default
+h <- 6*f
+w <- 25*f
+
+print(p4)
+ggsave(filename = "cds_correlations_coeff_vertical.png",   path = "output/cds analysis/", plot = p4, height = w, width = h, units = "cm", dpi = dpi, device = "png")
+```
+
+
+## Combined plot
+
+```{r}
+combined_plot <- (p11 + p12 + p4 + plot_layout(guides = "collect") + plot_annotation(tag_levels = 'A') & theme(legend.position = "right"))
+
+# Anzeige des kombinierten Plots
+print(combined_plot)
+
+f <- 1.2
+# Speichern des kombinierten Plots als PDF
+ggsave("output/cds analysis/k2p_combined_ALL.png", combined_plot, width = 8*f+3, height = 10*f+4)
+```
+
+
