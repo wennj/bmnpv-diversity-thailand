@@ -1,0 +1,371 @@
+---
+title: "Thailand BmNPV map"
+author: "Jörg Wennmann"
+date: "2024-10-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Required libraries
+
+```{r message=FALSE, include=FALSE}
+library(RColorBrewer)
+library(geodata)
+#library(scales)
+#library(sf)
+library(ggplot2)
+#library(stringr)
+
+'%ni%' <- Negate('%in%')
+```
+
+## Finding your country code
+
+This code helps you to find out the country code for your country of interest.
+
+```{r}
+country_codes("Asia")
+country_codes("Europe")
+```
+
+## Loading Geographic Boundary Data for Thailand at Multiple Administrative Levels
+
+You can select the administrative level at which the code should be loaded. The higher the level, the more detailed the map:
+
+-   thN1 = Provinces of Thailand
+
+-   thN2 = Districts of Thailand
+
+```{r}
+thN1 <- gadm(country = "THA", level = 1, resolution = 1, path = "input/")
+thN2 <- gadm(country = "THA", level = 2, resolution = 1, path = "input/")
+#thN3 <- gadm(country = "THA", level = 3, resolution = 1, path = "input/")
+```
+
+## Dataframe with geographical and genetic information
+
+A total of 21 BmNPV samples were collected in 21 different provinces in Thailand. The samples are named Th1 to Th21. The geographical information of the first and second administrative levels of Thailand are assigned to the samples. It is important that the longitude and latitude are clearly defined: longitude and latitude are the centres of the districts in which the samples were collected.\
++ thN
+
+```{r}
+genomeAbbr <- paste("Th", 1:21, sep = "")
+
+NAME_1 <- c("Roi Et", 
+            "Bueng Kan", 
+            "Ubon Ratchathani", 
+            "Buri Ram", 
+            "Surin", 
+            "Udon Thani", 
+            "Si Sa Ket",
+            "Amnat Charoen", 
+            "Loei", 
+            "Nong Khai", 
+            "Khon Kaen", 
+            "Sakon Nakhon", 
+            "Maha Sarakham",
+            "Chaiyaphum", 
+            "Nakhon Ratchasima", 
+            "Chiang Rai", 
+            "Kanchanaburi", 
+            "Uthai Thani", 
+            "Ratchaburi",
+            "Narathiwat", 
+            "Chumphon"
+            )
+
+NAME_2 <- c(
+  "Pho Chai",
+  "Pak Khat",
+  "Buntharik",
+  "Phutthaisong",
+  "Muang Surin",
+  "Kumphawapi",
+  "Huai Thap Than",
+  "Phana",
+  "Wang Saphung",
+  "Phon Phisai",
+  "Chum Phae",
+  "Wanon Niwat",
+  "Yang Si Surat",
+  "Phu Khieo",
+  "Phimai",
+  "Pa Daet",
+  "Muang Kanchanaburi",
+  "Ban Rai",
+  "Suan Phung",
+  "Muang Narathiwat",
+  "Sawi"
+  )
+
+district_coordinates <- c(
+16.323611, 103.769167,
+18.298333, 103.306667,
+14.756667, 105.411389,
+15.548333, 103.025,
+14.881667, 103.493333,
+17.113889, 103.018611,
+15.05, 104.023333,
+15.683333, 104.846667,
+17.301667, 101.768333,
+18.021944, 103.077222,
+16.544167, 102.099722,
+17.632222, 103.751944,
+15.69, 103.103333,
+16.376389, 102.128611,
+15.220556, 102.485833,
+19.504167, 99.993056,
+14.003333, 99.55,
+15.083889, 99.521111,
+13.543333, 99.34,
+6.426111, 101.823056,
+10.253056, 99.094444
+)
+
+district_coordinates <- as.data.frame(matrix(district_coordinates, ncol = 2, byrow = TRUE))
+colnames(district_coordinates) <- c("Latitude", "Longitude")
+
+NAME_1_Cols <- rep("black", length(genomeAbbr))
+NAME_2_Cols <- rep("black", length(genomeAbbr))
+
+genomeData <- data.frame(NAME_1, NAME_2, genomeAbbr, NAME_1_Cols, NAME_2_Cols)
+genomeData <- cbind(genomeData, district_coordinates)
+
+NAME_1_NGS <- c(
+  "Bueng Kan",
+  "Buri Ram",
+  "Sakon Nakhon",
+  "Maha Sarakham",
+  "Nakhon Ratchasima",
+  "Chiang Rai",
+  "Uthai Thani",
+  "Narathiwat"
+)
+
+genomeData$NAME_1_Cols[which(genomeData$NAME_1 %in% NAME_1_NGS)] <- "red"
+
+thProvinces <- thN1[thN1$NAME_1 %in% genomeData$NAME_1, ]
+thDistricts <- thN2[thN2$NAME_2 %in% genomeData$NAME_2, ]
+
+head(genomeData)
+```
+
+The next code links the geographic data of the provinces and districts in Thailand with the genetic data of the BmNPV samples (stored in genomeData) so that the geographic and genetic information is available in a combined data set. This information can then be used for further analysis or visualisation.
+
+```{r}
+thProvinces <- merge(x = thProvinces, y = genomeData, by = "NAME_1", all = TRUE, )
+thDistricts <- merge(x = thDistricts, y = genomeData, by = "NAME_2", all = TRUE, )
+
+print(names(thProvinces))
+print(names(thDistricts))
+```
+
+## Defining geographic regions
+
+Four geographic regions are defined, which will later be coloured differently. The regions are:
+
+-   Northern Region
+
+-   Northeastern Region
+
+-   Central Region
+
+-   Southern Region.
+
+In addition, the four regions are assigned the values of the mulberry plantation.
+
+```{r}
+thCentral <- c(
+"Ang Thong", 
+"Bangkok Metropolis", 
+"Chai Nat", 
+"Lop Buri", 
+"Nakhon Pathom", 
+"Nonthaburi", 
+"Pathum Thani", 
+"Phra Nakhon Si Ayutthaya", 
+"Samut Prakan", 
+"Samut Sakhon", 
+"Samut Songkhram", 
+"Saraburi", 
+"Sing Buri", 
+"Suphan Buri",
+"Nakhon Nayok", 
+"Chachoengsao", 
+"Chanthaburi", 
+"Chon Buri", 
+"Prachin Buri", 
+"Rayong", 
+"Sa Kaeo", 
+"Trat", 
+"Ratchaburi", 
+"Kanchanaburi",
+"Phetchaburi", 
+"Prachuap Khiri Khan"
+)
+
+thSouthern <- c(
+"Chumphon", 
+"Nakhon Si Thammarat", 
+"Narathiwat", 
+"Pattani", 
+"Phatthalung", 
+"Songkhla", 
+"Surat Thani", 
+"Yala", 
+"Krabi", 
+"Phangnga", 
+"Phuket", 
+"Ranong", 
+"Satun", 
+"Trang"
+)
+
+thNorthern <- c(
+"Chiang Mai", 
+"Chiang Rai", 
+"Lampang", 
+"Lamphun", 
+"Mae Hong Son", 
+"Nan", 
+"Phayao", 
+"Phrae", 
+"Uttaradit", 
+"Tak", 
+"Kamphaeng Phet",
+"Phetchabun", 
+"Phichit", 
+"Phitsanulok", 
+"Sukhothai", 
+"Nakhon Sawan", 
+"Uthai Thani"
+)
+
+thNortheastern <- c(
+"Amnat Charoen", 
+"Bueng Kan", 
+"Buri Ram", 
+"Chaiyaphum", 
+"Kalasin", 
+"Khon Kaen", 
+"Loei", 
+"Maha Sarakham", 
+"Mukdahan", 
+"Nakhon Phanom", 
+"Nakhon Ratchasima", 
+"Nong Bua Lam Phu", 
+"Nong Khai", 
+"Roi Et", 
+"Sakon Nakhon", 
+"Si Sa Ket", 
+"Surin", 
+"Ubon Ratchathani", 
+"Udon Thani", 
+"Yasothon"
+)
+
+Region_political <- c(rep("Central", length(thCentral)), 
+              rep("Southern", length(thSouthern)),
+              rep("Northern", length(thNorthern)),
+              rep("Northeastern", length(thNortheastern)))
+
+Mulberry_plantation <- c(rep(0.2, length(thCentral)), 
+              rep(0.1, length(thSouthern)),
+              rep(0.6, length(thNorthern)),
+              rep(4.3, length(thNortheastern)))
+
+Province <- c(thCentral, thSouthern, thNorthern, thNortheastern)
+
+mulberryStats <- data.frame(Region_political, Province, Mulberry_plantation)
+colnames(mulberryStats)[2] <- "NAME_1"
+
+head(mulberryStats)
+
+
+```
+
+# Map of Thailand with BmNPV locations
+
+```{r}
+DT_sf = st_as_sf(district_coordinates, coords = c("Longitude", "Latitude"), 
+                 crs = 4326, agr = "constant")
+
+thMulberry <- thN1[thN1$NAME_1 %in% mulberryStats$NAME_1, ]
+thMulberry <- merge(x = thMulberry, y = mulberryStats, by = "NAME_1", all = TRUE, )
+
+genomeData$Shape <- 25
+genomeData$Shape[which(genomeData$NAME_1 %in% NAME_1_NGS)] <- 25
+
+genomeData$NAME_1_Cols <- "black"
+genomeData$NAME_1_Cols[which(genomeData$NAME_1 %in% NAME_1_NGS)] <- "purple"
+
+######### annotation adjust
+#"Th1"  "Th2"  "Th3"  "Th4"  "Th5"  "Th6"  "Th7"  "Th8"  "Th9"  "Th10" "Th11" "Th12" "Th13" "Th14" "Th15" "Th16" "Th17" "Th18" "Th19" "Th20" "Th21"
+XAdjust <- c(0.0, 0.00, -0.2,   0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.25, 0.0, 0.0, 0.0,   0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0)
+YAdjust <- c(0.3, 0.3,  0.3, -0.3, 0.3, 0.3, 0.3, 0.3, 0.3,   0.3, 0.3, 0.3, 0.3, -0.24, 0.3, 0.3, 0.3, 0.3, 0.1, 0.3, 0.3)
+
+names(XAdjust) <- genomeData$genomeAbbr
+names(YAdjust) <- genomeData$genomeAbbr
+
+######### remove Th7, Th8 and Th21 (no PCR and WGS data)
+removeTh <- c("Th7", "Th8", "Th21")
+genomeDataFiltered <- subset(genomeData, genomeAbbr %ni% removeTh)
+
+
+XAdjust <- XAdjust[which(names(XAdjust) %ni% removeTh)]
+YAdjust <- YAdjust[which(names(YAdjust) %ni% removeTh)]
+
+#Add phylogeny information
+
+genomeDataFiltered$Phylogeny_shape <- c(21, 25, 21, 25, 21, 21, 21, 21, 21, 25, 25, 21, 25, 25, 21, 25, 21, 25)
+
+genomeDataFiltered$Phylogeny_Cols <- c("orange", "yellow", "orange","orange", "orange", "orange", "orange", "yellow" ,"red","black", "orange", "orange", "orange", "blue", "white", "white", "black", "black")
+
+size21 <- 7
+size25 <- 5
+genomeDataFiltered$Phylogeny_Size <- c(size21, size25, size21, size25, size21, size21, size21, size21, size21, size25, size25, size21, size25, size25, size21, size25, size21, size25 )
+
+
+
+######### plot
+p <- ggplot() +
+  geom_sf(data = st_as_sf(thMulberry), aes(fill = as.character(Mulberry_plantation))) +
+
+  geom_point(data = genomeDataFiltered, aes(x = Longitude, y = Latitude), 
+             color = "black", 
+             fill = genomeDataFiltered$Phylogeny_Cols, 
+             shape = genomeDataFiltered$Phylogeny_shape,
+             size = genomeDataFiltered$Phylogeny_Size) +
+
+  scale_fill_manual(values = c(brewer.pal(4, "GnBu")),
+                    name = "Percentage of villages\ngrowing mulberry to\nraise silkworm",
+                    #breaks = rev(c("0.1", "0.2", "0.6", "4.3")),
+                    labels=c("0.1% (Southern Region)", 
+                             "0.2 (Central Region)", 
+                             "0.6% (Northern Region)", 
+                             "4.3% (Northestern Region)")
+                    ) +
+  annotate("text", x = genomeDataFiltered$Longitude+XAdjust, y = genomeDataFiltered$Latitude+YAdjust, label = genomeDataFiltered$genomeAbbr) +
+  
+  theme_bw() +
+  theme(axis.line = element_line(colour = "darkgrey"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    legend.position = c(0.67, 0.3))
+
+
+
+dpi <- 300
+f <- 1.5
+
+h <- 20*f
+w <- 12*f
+
+print(p)
+ggsave(filename = "mulbarry plantation thailand with signs.pdf",   path = "output/", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "pdf")
+ggsave(filename = "mulbarry plantation thailand with signs.png",   path = "output/", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "png")
+```
