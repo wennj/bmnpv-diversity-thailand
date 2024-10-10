@@ -1,4 +1,4 @@
-# Creating a Map of Bombyx mori nucleopolyhedrovirus (BmNPV) Collection Sites in Thailand
+# Creating a Map of Bombyx mori nucleopolyhedrovirus Collection Sites in Thailand
 
 The figures and content in this repository are derived from the following publication:
 
@@ -17,3 +17,9 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 [Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
 
 <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map of Thailand with BmNPV locations" width="50%"/>
+
+## BmNPV Phylogeny
+
+Es wurden zwei Phylogenien erstellt, die auf partiell sequenzierten Genen und der Sequenz von 138 open reading frames basieren. Die Phylogenien sollten auch mit der Karte und somit den Ort der Probennahme der BmNPV in Verbindung stehen. Die Phloygenie selbst wurde mit MEGA durchgeführt und die Bäume in R eingelesen. Details zur Analyse lassen sich in der Publikation finden (Wennmann et al., 2024).
+
+[Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)

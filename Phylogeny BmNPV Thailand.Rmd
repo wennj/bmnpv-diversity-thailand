@@ -1,0 +1,239 @@
+---
+title: "Phylogeny BmNPV Thailand"
+author: "Jörg Wennmann"
+date: "2024-10-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Required libraries
+
+```{r message=FALSE}
+library(ggtree)
+library(phytools)
+library(patchwork)
+```
+
+#-----------------
+
+# Partial polh lef-8 lef-9 tree information
+
+## Condensed tree
+
+```{r}
+tree <- read.tree("data/phylogeny/tree_polh lef8 lef9/polt_lef8_lef9_BS.txt")
+
+
+pRoot <- ggtree(tree)
+
+pRoot <- collapse(pRoot, node = 35) + 
+  #geom_point2(aes(subset = (node == 35)), shape = 21, size = 5, fill='black') +
+  geom_text2(aes(subset = (node == 35)), label = "BmNPV isolates", hjust = -0.05) +
+  geom_tiplab() +
+  geom_treescale(x = 0.03, y = 1.2, width = 0.05, offset = 0.1) +
+  hexpand(4, direction = 1) +
+  vexpand(2.5, direction = 1)
+
+dpi <- 300
+f <- 1.3
+h <- 7*f
+w <- 13*f
+
+print(pRoot)
+ggsave(filename = "polh_lef8_lef9_subclade_root.pdf",   path = "output/phylogeny", plot = pRoot, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "pdf")
+
+ggsave(filename = "polh_lef8_lef9_subclade_root.png",   path = "output/phylogeny", plot = pRoot, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "png")
+```
+
+## Full tree
+
+```{r}
+tt35 <- extract.clade(tree, 35)
+
+noTips <- length(tt35$tip.label)
+
+alpha = 1
+size = 4
+
+bmTh <- c("BmNPV-Th1", "BmNPV-Th2", "BmNPV-Th3", "BmNPV-Th4", "BmNPV-Th5", 
+"BmNPV-Th6", "BmNPV-Th7", "BmNPV-Th8", "BmNPV-Th9", "BmNPV-Th10", 
+"BmNPV-Th11", "BmNPV-Th12", "BmNPV-Th13", "BmNPV-Th14", "BmNPV-Th15", 
+"BmNPV-Th16", "BmNPV-Th17", "BmNPV-Th18", "BmNPV-Th19", "BmNPV-Th20", 
+"BmNPV-Th21")
+
+thOrange <- c("BmNPV-Th1", "BmNPV-Th14", "BmNPV-Th9", 
+              "BmNPV-Th6", "BmNPV-Th3", "BmNPV-Th13", 
+              "BmNPV-Th4", "BmNPV-Th15", "BmNPV-Th5")
+
+thWGS <- c("BmNPV-Th20", "BmNPV-Th16", "BmNPV-Th18", 
+           "BmNPV-Th2" , "BmNPV-Th4",  "BmNPV-Th13",
+           "BmNPV-Th15", "BmNPV-Th12")
+
+thCol <- rep(NA, noTips)
+thCol[which(tt35$tip.label %in% bmTh)] <- "black"
+
+thFill <- rep(NA, noTips)
+thFill[which(tt35$tip.label %in% c("BmNPV-Th10", "BmNPV-Th2"))] <- "yellow"
+thFill[which(tt35$tip.label %in% c("BmNPV-Th12", "BmNPV-Th19", "BmNPV-Th20"))] <- "black"
+thFill[which(tt35$tip.label %in% c("BmNPV-Th17", "BmNPV-Th18"))] <- "white"
+thFill[which(tt35$tip.label %in% thOrange)] <- "orange"
+thFill[which(tt35$tip.label == "BmNPV-Th16")] <- "blue"
+thFill[which(tt35$tip.label == "BmNPV-Th11")] <- "red"
+
+thAlpha <- rep(NA, noTips)
+thAlpha[which(tt35$tip.label %in% bmTh)] <- alpha
+
+thShape <- rep(NA, noTips)
+thShape[which(tt35$tip.label %in% bmTh)] <- 21
+thShape[which(tt35$tip.label %in% thWGS)] <- 25
+
+node_hjust <- c(1.5, 1.5, 2.3, 1.5, 1.5, 1.5, 1.5, 1.5, 2.0, 2.0, 
+                2.8, 2.8, 1.5, 2.0, 2.0, 1.5, 1.8, 1.5, 1.5, 1.5, 
+                1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 0.0, 1.5, 
+                1.5)
+node_vjust <- rep(-0.4, 31)
+node_vjust[6] <- 0.4
+node_vjust[11] <- 0
+
+pPartial <- ggtree(tt35) +
+  geom_treescale(width = 0.001, x = 0.0015, y = 17, offset = 0.2) +
+  geom_tippoint(size = size, color = thCol, shape = thShape, fill = thFill, alpha = thAlpha) +
+  geom_tiplab(hjust = -0.15) +
+  #geom_text2(aes(subset = !isTip, label = label), hjust = 1.8, vjust = -0.4, size = 2) +
+  #geom_text(aes(label = label), hjust = 1.5, vjust = -0.4, size = 2) +
+  geom_nodelab(hjust = node_hjust, vjust = node_vjust, size = 2) +
+  hexpand(0.3, direction = 1)
+
+
+
+dpi <- 300
+f <- 1.3
+h <- 13*f
+w <- 7*f
+
+print(pPartial)
+ggsave(filename = "polh_lef8_lef9_subclade.pdf",   path = "output/phylogeny", plot = pPartial, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "pdf")
+ggsave(filename = "polh_lef8_lef9_subclade.png",   path = "output/phylogeny", plot = pPartial, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "png")
+```
+
+#-----------------
+
+# Concatenated 138 gene tree
+
+https://yulab-smu.top/treedata-book/chapter1.html
+
+```{r}
+tree <- read.tree("data/phylogeny/tree_138conc/138concBS.txt")
+
+noTips <- length(tree$tip.label)
+
+alpha = 1
+size = 2.5
+
+bmTh <- c("BmNPV-Th1", "BmNPV-Th2", "BmNPV-Th3", "BmNPV-Th4", "BmNPV-Th5", 
+"BmNPV-Th6", "BmNPV-Th7", "BmNPV-Th8", "BmNPV-Th9", "BmNPV-Th10", 
+"BmNPV-Th11", "BmNPV-Th12", "BmNPV-Th13", "BmNPV-Th14", "BmNPV-Th15", 
+"BmNPV-Th16", "BmNPV-Th17", "BmNPV-Th18", "BmNPV-Th19", "BmNPV-Th20", 
+"BmNPV-Th21")
+
+thOrange <- c("BmNPV-Th1", "BmNPV-Th14", "BmNPV-Th9", 
+              "BmNPV-Th6", "BmNPV-Th3", "BmNPV-Th13", 
+              "BmNPV-Th4", "BmNPV-Th15", "BmNPV-Th5")
+
+thWGS <- c("BmNPV-Th20", "BmNPV-Th16", "BmNPV-Th18", 
+           "BmNPV-Th2" , "BmNPV-Th4",  "BmNPV-Th13",
+           "BmNPV-Th15", "BmNPV-Th12")
+
+thCol <- rep(NA, noTips)
+thCol[which(tree$tip.label %in% bmTh)] <- "black"
+
+thFill <- rep(NA, noTips)
+thFill[which(tree$tip.label %in% c("BmNPV-Th10", "BmNPV-Th2"))] <- "yellow"
+thFill[which(tree$tip.label %in% c("BmNPV-Th12", "BmNPV-Th19", "BmNPV-Th20"))] <- "black"
+thFill[which(tree$tip.label %in% c("BmNPV-Th17", "BmNPV-Th18"))] <- "white"
+thFill[which(tree$tip.label %in% thOrange)] <- "orange"
+thFill[which(tree$tip.label == "BmNPV-Th16")] <- "blue"
+thFill[which(tree$tip.label == "BmNPV-Th11")] <- "red"
+
+thAlpha <- rep(NA, noTips)
+thAlpha[which(tree$tip.label %in% bmTh)] <- alpha
+
+thShape <- rep(NA, noTips)
+thShape[which(tree$tip.label %in% bmTh)] <- 21
+thShape[which(tree$tip.label %in% thWGS)] <- 25
+
+bmTh <- tree$tip.label
+
+# Rename the tip labels just before saving
+new_labels <- c(
+  "AcMNPV-C6" = "AcMNPV-C6 (L22858)", 
+  "BmNPV-S2" = "BmNPV-S2 (JQ071499) (CN)", 
+  "BmNPV-cubic" = "BmNPV-cubic (JQ991009) (CN)",
+  "BmNPV-C2" = "BmNPV-C2 (KF306216) (KR)",
+  "BmNPV-C6" = "BmNPV-C6 (KF306217) (KR)",
+  "BmNPV-C1" = "BmNPV-C1 (KF306215) (KR)",
+  "BmNPV-Baoshan" = "BmNPV-Baoshan (MT501299) (CN)",
+  "BmNPV-La" = "BmNPV-La (LC500465) (LA)",
+  "BmNPV" = "BmNPV (NC_001962) (JP)",
+  "BmNPV-T3" = "BmNPV-T3 (L33180) (JP)",
+  "BmNPV-Zhejiang" = "BmNPV-Zhejiang (JQ991008) (CN)",
+  "BmNPV-Brazil" = "BmNPV-Brazil (KJ186100) (BR)",
+  "BmNPV-H4" = "BmNPV-H4 (LC150780) (JP)",
+  "BmNPV-Guangxi" = "BmNPV-Guangxi (JQ991011) (CN)", 
+  "BmNPV-Hakozaki" = "BmNPV-Hakozaki (LC790006) (JP)",
+  "BmNPV-S1" = "BmNPV-S1 (FJ882854) (CN)",
+  "BmNPV-My" = "BmNPV-My (MW842985) (IN)",
+  "BmNPV-India" = "BmNPV-India (JQ991010) (IN)",
+  "BmNPV-Th12" = "BmNPV-Th12 (PP048618) (TH)", 
+  "BmNPV-Th18" = "BmNPV-Th18 (PP048622) (TH)",
+  "BmNPV-Th20" = "BmNPV-Th20 (PP048623) (TH)",
+  "BmNPV-Th16" = "BmNPV-Th16 (PP048621) (TH)",
+  "BmNPV-Th2" = "BmNPV-Th2 (PP048616) (TH)",
+  "BmNPV-Th15" = "BmNPV-Th15 (PP048620) (TH)", 
+  "BmNPV-Th4" = "BmNPV-Th4 (PP048616) (TH)", 
+  "BmNPV-Th13" = "BmNPV-Th13 (PP048619) (TH)")
+
+
+tree$tip.label <- new_labels[tree$tip.label]
+
+library(ggtext)
+
+pWGS <- ggtree(tree) +
+  geom_tiplab(hjust = -0.08, size = 3.5) +
+  geom_nodelab(hjust = 1.5, vjust = -0.4, size = 2) +
+  geom_tippoint(size = size, color = thCol, shape = thShape, fill = thFill, alpha = thAlpha) +
+  geom_treescale(x = 0.01, y = 4.5, offset = 0.2) +
+  hexpand(0.2, direction = 1)
+#theme(text = element_markdown()) # Enable Markdown formatting for labels
+
+
+dpi <- 300
+f <- 1.5
+h <- 6*f
+w <- 13*f
+
+print(p)
+ggsave(filename = "138_genes_tree.pdf",   path = "output/phylogeny", plot = pWGS, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "pdf")
+ggsave(filename = "138_genes_tree.png",   path = "output/phylogeny", plot = pWGS, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "png")
+```
+
+#-----------------
+
+# Create a patchwork
+
+```{r}
+combined_plot <- (pPartial + pWGS) + plot_annotation(tag_levels = 'A')
+
+# Anzeige des kombinierten Plots
+print(combined_plot)
+
+f <- 1.2
+# Speichern des kombinierten Plots als PDF
+file_name <- "output/phylogeny/partial_wgs_phylogeny.png"
+ggsave(file_name, combined_plot, width = 16*f, height = 5*f)
+```
+
+

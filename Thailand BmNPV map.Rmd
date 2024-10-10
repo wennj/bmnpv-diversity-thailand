@@ -283,7 +283,7 @@ head(mulberryStats)
 
 ```
 
-# Map of Thailand with BmNPV locations
+## Map of Thailand with BmNPV locations
 
 ```{r}
 DT_sf = st_as_sf(district_coordinates, coords = c("Longitude", "Latitude"), 
