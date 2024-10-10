@@ -20,6 +20,8 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 
 ## BmNPV Phylogeny
 
-Es wurden zwei Phylogenien erstellt, die auf partiell sequenzierten Genen und der Sequenz von 138 open reading frames basieren. Die Phylogenien sollten auch mit der Karte und somit den Ort der Probennahme der BmNPV in Verbindung stehen. Die Phloygenie selbst wurde mit MEGA durchgeführt und die Bäume in R eingelesen. Details zur Analyse lassen sich in der Publikation finden (Wennmann et al., 2024).
+Two phylogenies were constructed based on partially sequenced genes and the sequence of 138 open reading frames. The phylogenies should also be linked to the map and thus to the location where the BmNPV samples were collected. The phylogeny itself was carried out using MEGA and the trees were read into R. Details of the sequence and phylogenetic analysis can be found in the publication (Wennmann et al., 2024).
 
-[Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
+[Click here for the R code used ](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)[to](https://github.com/wennj/bmnpv-map-thailand/blob/main/Phylogeny%20BmNPV%20Thailand.Rmd)[ create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
+
+![Phylogeny](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/phylogeny/partial_wgs_phylogeny.png){width="678" height="31"}
