@@ -1,0 +1,335 @@
+---
+title: "Geographic genetic distance correlation analysis"
+author: "Jörg Wennmann"
+date: "2024-10-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Libraries
+
+```{r include=FALSE}
+library(Biostrings)
+library(ape)
+library(geosphere)
+library(ggplot2)
+library(ggtext)
+library(RColorBrewer)
+library(stringr)
+library(patchwork)
+
+'%ni%' <- Negate('%in%')
+```
+
+#----------
+
+# Vector with BmNPV genome annotation
+
+```{r}
+gene_annotation <- structure(list(annotation = c("polh", "orf1629", "pk-1", "bm4", 
+"bm5", "lef-1", "egt", "odv-e26", "bm9", "bm10", "bm11", "arif-1", "pif-2", 
+"f-protein", "pkip", "dbp", "bm17", "iap-1", "lef-6", "bm20", "bm21", "bro-a", 
+"sod", "fgf", "bm25", "ubiquitin", "pp31", "lef-11", "bv-e31", "p43", 
+"p47", "lef-12", "gta", "bm34", "bm35", "bm36", "odv-e66", "ets", "lef-8", 
+"bm40", "bm41", "ac53", "lef-10", "vp1054", "bm45", "bm46", "bm47", "bm48", "bm49", "fp25", 
+"lef-9", "bm52", "gp37", "dnapol", "desmo", "lef-3", "pif-6", "bm58", 
+"iap-2", "bm60", "bm61", "bm62", "ac75", "bm64", "vlf-1", "ac78", "bm67", "gp41", 
+"ac81", "tlp", "vp91", "vp15", "cg30", "vp39", "lef-4", "bm76", "p33", 
+"p18", "odv-e25", "helicase", "pif-4", "bro-c", "38k", "lef-5", 
+"p6.9", "p40", "p12", "p48", "vp80", "he65", "ac106/107", "ac108", 
+"odv-ec43", "ac110", "bm95", "bm96", "pif-3", "bm98", "bm99", "pif-1", "bm101", "bm102", 
+"bm103", "gcn2", "bm105", "lef-7", "chitinase", "v-cath", "gp64", "p24", 
+"gp16", "pp34", "bm113", "alkexo", "p35", "p26", "p10", "p74", "me53", 
+"bm120", "ie-0", "p49", "odv-e18", "odv-ec27", "ac145", "ac146", "ie-1", 
+"pif-5", "bm129", "bm130", "ie-2", "pe38", "bm133", "ptp", "bro-d", "bm136", "bm137", 
+"lef-2"), core_gene = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, 
+FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, 
+FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, 
+FALSE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, 
+FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, 
+FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)), class = "data.frame", row.names = c(NA, 
+-138L))
+```
+
+
+#----------
+
+# Calculate Kimura-2 parameter distances from ORF alignments
+
+```{r}
+# Einlesen der Sequenzen aus der FASTA-Datei
+alle_sequenzen <- read.dna(file = "data/alignments/concatenated/138 cds BmNPV AcMNPV.fasta", format = "fasta")
+
+# Anzeigen der Namen aller Sequenzen
+sequenz_namen <- dimnames(alle_sequenzen)[[1]]
+
+# Auswahl der gewünschten Sequenzen (ersetze dies durch die tatsächlichen Namen)
+gefilterte_namen <- grep("BmNPV-Th", sequenz_namen, value = TRUE)
+
+gewaehlte_sequenzen <- alle_sequenzen[gefilterte_namen, ]
+
+sequenz_namen <- dimnames(gewaehlte_sequenzen)[[1]]
+
+abgekuerzte_namen <- gsub(".*(Th[0-9]+).*", "\\1", sequenz_namen)
+
+dimnames(gewaehlte_sequenzen)[[1]] <- abgekuerzte_namen
+
+# Berechnung der paarweisen K2P-Distanzen für die ausgewählten Sequenzen
+k2p_distances <- dist.dna(gewaehlte_sequenzen, model = "K80")
+
+# Umwandeln des dist-Objekts in eine volle Matrix und Zuordnen der Namen
+k2p_matrix <- as.matrix(k2p_distances)
+
+k2p_matrix <- k2p_matrix[c("Th2", "Th4", "Th12", "Th13", "Th15", "Th16", "Th18", "Th20"), c("Th2", "Th4", "Th12", "Th13", "Th15", "Th16", "Th18", "Th20")]
+
+
+print(k2p_matrix)
+```
+# Calculate geographic distances
+
+## Load genome data table
+
+```{r}
+genomeData <- structure(list(NAME_1 = c("Roi Et", "Bueng Kan", "Ubon Ratchathani", 
+"Buri Ram", "Surin", "Udon Thani", "Si Sa Ket", "Amnat Charoen", 
+"Loei", "Nong Khai", "Khon Kaen", "Sakon Nakhon", "Maha Sarakham", 
+"Chaiyaphum", "Nakhon Ratchasima", "Chiang Rai", "Kanchanaburi", 
+"Uthai Thani", "Ratchaburi", "Narathiwat", "Chumphon"), NAME_2 = c("Pho Chai", 
+"Pak Khat", "Buntharik", "Phutthaisong", "Muang Surin", "Kumphawapi", 
+"Huai Thap Than", "Phana", "Wang Saphung", "Phon Phisai", "Chum Phae", 
+"Wanon Niwat", "Yang Si Surat", "Phu Khieo", "Phimai", "Pa Daet", 
+"Muang Kanchanaburi", "Ban Rai", "Suan Phung", "Muang Narathiwat", 
+"Sawi"), genomeAbbr = c("Th1", "Th2", "Th3", "Th4", "Th5", "Th6", 
+"Th7", "Th8", "Th9", "Th10", "Th11", "Th12", "Th13", "Th14", 
+"Th15", "Th16", "Th17", "Th18", "Th19", "Th20", "Th21"), NAME_1_Cols = c("black", 
+"purple", "black", "purple", "black", "black", "black", "black", 
+"black", "black", "black", "purple", "purple", "black", "purple", 
+"purple", "black", "purple", "black", "purple", "black"), NAME_2_Cols = c("black", 
+"black", "black", "black", "black", "black", "black", "black", 
+"black", "black", "black", "black", "black", "black", "black", 
+"black", "black", "black", "black", "black", "black"), latitude = c(16.323611, 
+18.298333, 14.756667, 15.548333, 14.881667, 17.113889, 15.05, 
+15.683333, 17.301667, 18.021944, 16.544167, 17.632222, 15.69, 
+16.376389, 15.220556, 19.504167, 14.003333, 15.083889, 13.543333, 
+6.426111, 10.253056), longitude = c(103.769167, 103.306667, 105.411389, 
+103.025, 103.493333, 103.018611, 104.023333, 104.846667, 101.768333, 
+103.077222, 102.099722, 103.751944, 103.103333, 102.128611, 102.485833, 
+99.993056, 99.55, 99.521111, 99.34, 101.823056, 99.094444), Shape = c(25, 
+25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 
+25, 25, 25, 25)), row.names = c(NA, -21L), class = "data.frame")
+
+#Subset the Table: keep only samples that were fully sequenced
+genomeData <- subset(genomeData, genomeAbbr %in% abgekuerzte_namen)
+```
+
+## Pairwise geographic distances
+
+```{r}
+# Berechnen der geographischen Distanzen zwischen den Orten
+coords <- cbind(genomeData$longitude, genomeData$latitude)
+geo_dist_matrix <- as.matrix(distm(coords, coords, fun = distHaversine) / 1000) # Umwandlung in Kilometer
+
+rownames(geo_dist_matrix) <- colnames(geo_dist_matrix) <- genomeData$genomeAbbr
+
+# Erstellen eines Datenrahmens mit allen Paar-Kombinationen und Distanzen
+combos <- expand.grid(seq1 = genomeData$genomeAbbr, seq2 = genomeData$genomeAbbr)
+combos <- combos[combos$seq1 != combos$seq2, ] # Entfernen von gleichen Paaren
+
+vals <- unique(combos$seq1)
+combos <- combn(vals, 2)
+combos <- data.frame(seq1 = combos[1,], seq2 = combos[2,])
+
+combos$dot_fill <- c("orange", "orange", "orange", "orange", "orange", "orange", "orange", "black", "black", "black", "black", "black", "black", "orange", "orange", "orange", "orange", "orange", "orange", "orange", "orange", "orange", "blue", "blue", "blue", "grey", "grey", "black")
+
+combos$dot_border <- c("black", "orange", "orange", "blue", "grey", "black", "yellow", "orange", "orange", "blue", "grey", "black", "yellow", "orange", "blue", "grey", "black", "yellow", "blue", "grey", "black", "yellow", "grey", "black", "yellow", "black", "yellow", "yellow")
+
+# Zuordnen der genetischen und geographischen Distanzen
+genetic_dist <- numeric(nrow(combos))
+geo_dist <- numeric(nrow(combos))
+
+for (i in 1:nrow(combos)) {
+  genetic_dist[i] <- k2p_matrix[combos$seq1[i], combos$seq2[i]]
+  geo_dist[i] <- geo_dist_matrix[match(combos$seq1[i], genomeData$genomeAbbr), match(combos$seq2[i], genomeData$genomeAbbr)]
+}
+
+combos$genetic_dist <- genetic_dist
+combos$geo_dist <- geo_dist
+
+print(geo_dist_matrix)
+```
+
+```{r}
+
+write.csv(k2p_matrix, file = "output/distance matrix/k2p_matrix.csv", quote = TRUE)
+write.csv(geo_dist_matrix, file = "output/distance matrix/geo_dist_matrix.csv", quote = TRUE)
+
+print(k2p_matrix)
+print(geo_dist_matrix)
+```
+
+## Geographic and genetic correlation
+
+```{r}
+correlation_test <- cor.test(combos$genetic_dist, combos$geo_dist, method = "pearson")
+
+# Create Text for inside plot
+cor_text <- paste("Pearson r =", round(correlation_test$estimate, 3), 
+                  "\np =", format.pval(correlation_test$p.value, digits = 3))
+
+print(correlation_test)
+
+#---------------
+
+
+p <- ggplot(combos, aes(x = geo_dist, y = genetic_dist)) +
+  geom_smooth(method = "lm", col = "black", se = F, linewidth = 0.5, linetype = "dotted") +
+  geom_point(shape = 21, size = 3, stroke = 2, color = combos$dot_border, fill = combos$dot_fill) +
+  labs(x = "Geographic distance (km)", 
+       y = "Genetic distance (K2P)"
+       )  +
+  scale_x_continuous(breaks = seq(0, 1500, 250)) +
+  scale_y_continuous(breaks = seq(0, 0.02, 0.0025), limits = c(0, 0.02)) +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(colour = "black", fill= NA, linewidth = 1),
+        legend.position = "none")
+
+dpi <- 300
+f <- 1.5
+
+#default
+h <- 6*f
+w <- 8*f
+
+print(p)
+
+ggsave(filename = "correlation_geom_k2p.png",   path = "output/correlation/", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "png")
+
+```
+# Correlation (output with patchwork)
+
+```{r}
+library(ggplot2)
+library(patchwork)
+
+# Funktion zur Berechnung der Pearson-Korrelation und des p-Werts für ein Alignment
+calculate_correlation <- function(file_path, 
+                                  geo_dist_matrix,
+                                  genome_data, 
+                                  gene_annotation,  # Neuer Parameter für die Annotationen
+                                  isolate = c("Th2", "Th4", "Th12", "Th13", "Th15", "Th16", "Th18", "Th20")) {
+      
+      # Einlesen der Sequenzen
+      sequenzen <- read.dna(file = file_path, format = "fasta")
+      sequenzen <- sequenzen[isolate, ]
+      
+      # Berechnung der genetischen Distanz
+      genetic_distances <- dist.dna(sequenzen, model = "K80")
+      genetic_matrix <- as.matrix(genetic_distances)
+    
+      # Vorbereitung der Daten für den Vergleich
+      combo_data <- expand.grid(seq1 = genome_data$genomeAbbr, seq2 = genome_data$genomeAbbr)
+      combo_data <- combo_data[combo_data$seq1 != combo_data$seq2, ]
+      vals <- unique(combo_data$seq1)
+      combo_data <- combn(vals, 2)
+      combo_data <- data.frame(seq1 = combo_data[1,], seq2 = combo_data[2,])
+      
+      combo_data$genetic_dist <- mapply(function(x, y) genetic_matrix[x, y], combo_data$seq1, combo_data$seq2)
+      combo_data$geo_dist <- mapply(function(x, y) geo_dist_matrix[match(x, genome_data$genomeAbbr), 
+                                                                   match(y, genome_data$genomeAbbr)], 
+                                     combo_data$seq1, combo_data$seq2)
+    
+      # Berechnung der Pearson-Korrelation
+      correlation_result <- cor.test(combo_data$genetic_dist, combo_data$geo_dist, method = "pearson")
+      
+      results_return <- c(correlation_result$estimate, correlation_result$p.value, correlation_result$parameter, correlation_result$statistic, correlation_result$conf.int)
+      
+      # Extrahiere die Zahl aus dem Dateinamen
+      file_name <- basename(file_path)
+      extracted_number <- as.numeric(sub(".*CDS_-(\\d+)\\.fasta", "\\1", file_name))
+      
+      # Finde die entsprechende Annotation basierend auf der extrahierten Zahl
+      if (!is.na(extracted_number) && extracted_number <= nrow(gene_annotation)) {
+        title <- gene_annotation$annotation[extracted_number+1]
+      } else {
+        title <- "Unknown"
+      }
+      
+      # Nur Plots erstellen, wenn der p-Wert signifikant ist
+      if(!is.na(correlation_result$p.value) && correlation_result$p.value < 0.05) {
+          p <- ggplot(combo_data, aes(x = geo_dist, y = genetic_dist)) +
+            geom_smooth(method = "lm", col = "red", se = F) +
+            geom_point() +
+            ggtitle(title) +  # Verwende die extrahierte Annotation als Titel
+            labs(x = "Geographic distance (km)", y = "Genetic distance (K2P)")  +
+            scale_x_continuous(breaks = seq(0, 1500, 250)) +
+            theme_bw() +
+            theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  axis.line = element_line(colour = "black"),
+                  panel.background = element_rect(fill = "white"),
+                  panel.border = element_rect(colour = "black", fill= NA, linewidth = 1),
+                  legend.position = "none")
+          return(list(plot = p, number = extracted_number))
+      }
+      
+      return(NULL)  # Falls kein Plot erstellt wurde
+}
+
+# Liste aller Dateien im Ordner
+folder_path <- "data/alignments/individual/"
+alignment_files <- list.files(folder_path, full.names = TRUE)
+
+# Initialisiere Liste, um die Plots zu speichern
+plot_list <- list()
+
+# Berechne Korrelationen und speichere Plots
+for (file in alignment_files) {
+  plot_data <- calculate_correlation(file, geo_dist_matrix, genomeData, gene_annotation)
+  if (!is.null(plot_data)) {
+    plot_list[[length(plot_list) + 1]] <- plot_data
+  }
+}
+
+# Sortiere die Plots nach der extrahierten Zahl (number)
+plot_list <- plot_list[order(sapply(plot_list, function(x) x$number))]
+
+# Extrahiere nur die Plots für die Kombination
+plots_to_combine <- lapply(plot_list, function(x) x$plot)
+
+
+combination_ORF_K2P_plot  <- Reduce(`+`, plots_to_combine)
+
+suppressMessages(
+print(combination_ORF_K2P_plot)
+)
+
+# Speichere die kombinierte Grafik
+dpi <- 300
+f <- 2
+h <- 19 * f
+w <- 20 * f
+suppressMessages(
+ggsave(filename = "CDS with significant correlation.pdf", 
+       path = "output/correlation/", 
+       plot = combination_ORF_K2P_plot, 
+       height = h, width = w, units = "cm", dpi = dpi, device = "pdf")
+)
+```
+
+

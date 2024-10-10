@@ -33,3 +33,7 @@ Two phylogenies were constructed based on partially sequenced genes and the sequ
 [Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Phylogeny%20BmNPV%20Thailand.Rmd)
 
 ![Phylogeny](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/phylogeny/partial_wgs_phylogeny.png)
+
+## Correlation between geographic and genetic distance
+
+The geographical information (longitude/latitude) can be used to calculate the distances between the BmNPV collection sites. Genetic distances, in this study the Kimura 2 parameter, can be calculated from the sequence data. A correlation can be used to determine whether there is a correlation between these two.

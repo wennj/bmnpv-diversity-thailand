@@ -363,6 +363,6 @@ h <- 20*f
 w <- 12*f
 
 print(p)
-ggsave(filename = "mulbarry plantation thailand with signs.pdf",   path = "output/", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "pdf")
-ggsave(filename = "mulbarry plantation thailand with signs.png",   path = "output/", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "png")
+ggsave(filename = "mulbarry plantation thailand with signs.pdf",   path = "output/map", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "pdf")
+ggsave(filename = "mulbarry plantation thailand with signs.png",   path = "output/map", plot = p, height = h, width = w, units = "cm", dpi = dpi, device = "png")
 ```

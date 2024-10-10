@@ -215,7 +215,7 @@ f <- 1.5
 h <- 6*f
 w <- 13*f
 
-print(p)
+print(pWGS)
 ggsave(filename = "138_genes_tree.pdf",   path = "output/phylogeny", plot = pWGS, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "pdf")
 ggsave(filename = "138_genes_tree.png",   path = "output/phylogeny", plot = pWGS, height = h*f, width = w*f, units = "cm", dpi = dpi, device = "png")
 ```
@@ -225,7 +225,7 @@ ggsave(filename = "138_genes_tree.png",   path = "output/phylogeny", plot = pWGS
 # Create a patchwork
 
 ```{r}
-combined_plot <- (pPartial + pWGS) + plot_annotation(tag_levels = 'A')
+combined_plot <- ((pPartial + pWGS) + plot_annotation(tag_levels = 'A'))
 
 # Anzeige des kombinierten Plots
 print(combined_plot)
