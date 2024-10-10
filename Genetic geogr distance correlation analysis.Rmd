@@ -325,10 +325,10 @@ f <- 2
 h <- 19 * f
 w <- 20 * f
 suppressMessages(
-ggsave(filename = "CDS with significant correlation.pdf", 
+ggsave(filename = "CDS with significant correlation.png", 
        path = "output/correlation/", 
        plot = combination_ORF_K2P_plot, 
-       height = h, width = w, units = "cm", dpi = dpi, device = "pdf")
+       height = h, width = w, units = "cm", dpi = dpi, device = "png")
 )
 ```
 

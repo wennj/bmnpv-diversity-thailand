@@ -44,13 +44,13 @@ The geographical information (longitude/latitude) can be used to calculate the d
 
 The correlation can also be checked for all CDS individually. The alignments of the individual CDS serve as a basis for this. Output is only generated for the CDS that show a positive correlation.
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.pdf" alt="Map Preview" width="20%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Map Preview" width="20%"/>
 
 <details>
 
 <summary>Click to expand the full-sized map</summary>
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.pdf" alt="Full Map of Thailand" width="60%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Full Map of Thailand" width="60%"/>
 
 </details>
 
