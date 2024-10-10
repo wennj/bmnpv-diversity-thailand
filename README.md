@@ -1,4 +1,4 @@
-# Creating a Map of Bombyx mori nucleopolyhedrovirus Collection Sites in Thailand
+# Analysis of the geographical and genetic distance of samples of the Bombyx mori nucleopolyhedrovirus from Thailand
 
 The figures and content in this repository are derived from the following publication:
 
@@ -53,4 +53,3 @@ The correlation can also be checked for all CDS individually. The alignments of 
 <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Full Map of Thailand" width="100%"/>
 
 </details>
-
