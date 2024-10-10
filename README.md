@@ -40,16 +40,30 @@ The geographical information (longitude/latitude) can be used to calculate the d
 
 [Click here for the R code used to create the next two figures.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Genetic%20geogr%20distance%20correlation%20analysis.Rmd)
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/correlation_geom_k2p.png" alt="Map Preview" width="40%"/>
+![](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/correlation_geom_k2p.png){alt="Map Preview" width="40%"}
 
 The correlation can also be checked for all CDS individually. The alignments of the individual CDS serve as a basis for this. Output is only generated for the CDS that show a positive correlation.
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Map Preview" width="40%"/>
+![](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png){alt="Map Preview" width="40%"}
 
 <details>
 
 <summary>Click to expand the full-sized map</summary>
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Full Map of Thailand" width="100%"/>
+![](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png){alt="Full Map of Thailand" width="100%"}
+
+</details>
+
+## Analysis of the genetic distance at the CDS level
+
+The alignments of all 138 CDSs of the fully sequenced genomes also allowed the genetic K2P distance to be considered at the level of individual CDSs. This was done by calculating the K2P distance for each CDS and displaying the result in a matrix. It was also possible to check whether there was a correlation between geographical and genetic distance.
+
+![](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/cds%20analysis/k2p_combined_ALL.png){alt="Map Preview"}
+
+<details>
+
+<summary>Click to expand the full-sized map</summary>
+
+![](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/cds%20analysis/k2p_combined_ALL.png){alt="Full Map of Thailand" width="100%"}
 
 </details>
