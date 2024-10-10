@@ -38,9 +38,9 @@ Two phylogenies were constructed based on partially sequenced genes and the sequ
 
 The geographical information (longitude/latitude) can be used to calculate the distances between the BmNPV collection sites. Genetic distances, in this study the Kimura 2 parameter, can be calculated from the sequence data. A correlation can be used to determine whether there is a correlation between these two.
 
-[Click here for the R code used to create this figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Genetic%20geogr%20distance%20correlation%20analysis.Rmd)
+[Click here for the R code used to create the next two figures.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Genetic%20geogr%20distance%20correlation%20analysis.Rmd)
 
-<img src="https://github.com/wennj/https://github.com/wennj/bmnpv-map-thailand/blob/main/Genetic%20geogr%20distance%20correlation%20analysis.Rmd" alt="Map Preview" width="50%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/correlation_geom_k2p.png" alt="Map Preview" width="50%"/>
 
 The correlation can also be checked for all CDS individually. The alignments of the individual CDS serve as a basis for this. Output is only generated for the CDS that show a positive correlation.
 
