@@ -50,7 +50,7 @@ The correlation can also be checked for all CDS individually. The alignments of 
 
 <summary>Click to expand the full-sized map</summary>
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Full Map of Thailand" width="60%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.png" alt="Full Map of Thailand" width="100%"/>
 
 </details>
 
