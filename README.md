@@ -16,13 +16,13 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 
 [Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/map/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map Preview" width="25%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/map/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map Preview" width="40%"/>
 
 <details>
 
 <summary>Click to expand the full-sized map</summary>
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/map/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Full Map of Thailand" width="60%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/map/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Full Map of Thailand" width="100%"/>
 
 </details>
 
