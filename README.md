@@ -16,13 +16,13 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 
 [Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map Preview" width="25%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/map/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map Preview" width="25%"/>
 
 <details>
 
 <summary>Click to expand the full-sized map</summary>
 
-<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Full Map of Thailand" width="60%"/>
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/map/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Full Map of Thailand" width="60%"/>
 
 </details>
 
@@ -37,3 +37,20 @@ Two phylogenies were constructed based on partially sequenced genes and the sequ
 ## Correlation between geographic and genetic distance
 
 The geographical information (longitude/latitude) can be used to calculate the distances between the BmNPV collection sites. Genetic distances, in this study the Kimura 2 parameter, can be calculated from the sequence data. A correlation can be used to determine whether there is a correlation between these two.
+
+[Click here for the R code used to create this figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Genetic%20geogr%20distance%20correlation%20analysis.Rmd)
+
+<img src="https://github.com/wennj/https://github.com/wennj/bmnpv-map-thailand/blob/main/Genetic%20geogr%20distance%20correlation%20analysis.Rmd" alt="Map Preview" width="50%"/>
+
+The correlation can also be checked for all CDS individually. The alignments of the individual CDS serve as a basis for this. Output is only generated for the CDS that show a positive correlation.
+
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.pdf" alt="Map Preview" width="20%"/>
+
+<details>
+
+<summary>Click to expand the full-sized map</summary>
+
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/correlation/CDS%20with%20significant%20correlation.pdf" alt="Full Map of Thailand" width="60%"/>
+
+</details>
+
