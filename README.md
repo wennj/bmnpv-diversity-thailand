@@ -69,5 +69,3 @@ The alignments of all 138 CDSs of the fully sequenced genomes also allowed the g
 <img src="output/cds analysis/k2p_combined_ALL.png" alt="Full Map of Thailand" width="100%"/>
 
 </details>
-
-Happy researching!
