@@ -18,9 +18,13 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 
 <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map of Thailand with BmNPV locations" width="50%"/>
 
+<p align="center">
+  <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map Preview" width="150">
+</p>
+
 <details>
-  <summary>Click to expand the image</summary>
-  <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Figure: Map of Thailand" width="500">
+  <summary>Click to expand the full-sized map</summary>
+  <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Full Map of Thailand" width="500">
 </details>
 
 ## BmNPV Phylogeny
