@@ -12,13 +12,11 @@ The figures and content in this repository are derived from the following public
 
 ## Map of Thailand
 
-<div style="float: left; margin-right: 20px;">
-  <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map of Thailand" width="25%">
-</div>
-
 As part of the study, 21 locations in Thailand were sampled to collect BmNPV (Wennmann et al., 2024). For a better visualization, a map showing all the provinces of Thailand was created. The provinces were dividgied into four regions. The regions were coloured according to the intensity of agricultural cultivation of mulberry trees. The locations of the BmNPV samples were marked with different symbols, depending on whether they were analysed using whole genome sequencing (WGS) or only partial gene sequencing (Sanger sequencing). Phylogenetic analyses were performed based on the sequence data, and depending on the phylogenetic clade, the symbols on the map were coloured accordingly. This complex representation conveys a lot of interesting information ([Figure](https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png)).
 
 [Click here for the R code used to create the figure.](https://github.com/wennj/bmnpv-map-thailand/blob/main/Thailand%20BmNPV%20map.Rmd)
+
+<img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map Preview" width="25%"/>
 
 <details>
 
