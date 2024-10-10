@@ -14,10 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r message=FALSE, include=FALSE}
 library(RColorBrewer)
 library(geodata)
-#library(scales)
-#library(sf)
 library(ggplot2)
-#library(stringr)
 
 '%ni%' <- Negate('%in%')
 ```
@@ -40,8 +37,8 @@ You can select the administrative level at which the code should be loaded. The 
 -   thN2 = Districts of Thailand
 
 ```{r}
-thN1 <- gadm(country = "THA", level = 1, resolution = 1, path = "input/")
-thN2 <- gadm(country = "THA", level = 2, resolution = 1, path = "input/")
+thN1 <- gadm(country = "THA", level = 1, resolution = 1, path = "data/")
+thN2 <- gadm(country = "THA", level = 2, resolution = 1, path = "data/")
 #thN3 <- gadm(country = "THA", level = 3, resolution = 1, path = "input/")
 ```
 
