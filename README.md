@@ -18,6 +18,11 @@ As part of the study, 21 locations in Thailand were sampled to collect BmNPV (We
 
 <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Map of Thailand with BmNPV locations" width="50%"/>
 
+<details>
+  <summary>Click to expand the image</summary>
+  <img src="https://github.com/wennj/bmnpv-map-thailand/blob/main/output/mulbarry%20plantation%20thailand%20with%20signs.png" alt="Figure: Map of Thailand" width="500">
+</details>
+
 ## BmNPV Phylogeny
 
 Two phylogenies were constructed based on partially sequenced genes and the sequence of 138 open reading frames. The phylogenies should also be linked to the map and thus to the location where the BmNPV samples were collected. The phylogeny itself was carried out using MEGA and the trees were read into R. Details of the sequence and phylogenetic analysis can be found in the publication (Wennmann et al., 2024).
