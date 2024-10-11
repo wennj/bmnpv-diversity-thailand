@@ -2,11 +2,11 @@
 
 The figures and content in this repository are derived from the following publication:
 
-**Wennmann, J.T., Senger, S., Ruoff, B., Jehle, J.A., Suraporn, S. (accepted for publication). Distribution and genetic deviersity of Bombyx mori nucleopolyhedrovirus in mass-reared silkworms in Thailand. Journal of Invertebrate Pathology , xxx xxx xxx. [DOI link to the publication]**
+-   **Wennmann, J.T., Senger, S., Ruoff, B., Jehle, J.A., Suraporn, S. (accepted for publication). Distribution and genetic deviersity of Bombyx mori nucleopolyhedrovirus in mass-reared silkworms in Thailand. Journal of Invertebrate Pathology , xxx xxx xxx. [DOI link to the publication]**
 
 ## Aim of this repository
 
--   Demonstration of the R code for creating a map of a country (here Thailand) to mark collection locations of baculovirus samples.
+-   Demonstration of the R code for creating a map of Thailand to mark sampling sites of baculovirus samples.
 
 -   Learn how R can be used to analyse the correlation between geographical and genetic distance.
 
