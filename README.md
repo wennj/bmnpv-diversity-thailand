@@ -2,7 +2,7 @@
 
 The figures and content in this repository are derived from the following publication:
 
--   **Wennmann, J.T., Senger, S., Ruoff, B., Jehle, J.A., Suraporn, S. (accepted for publication).** Distribution and genetic deviersity of Bombyx mori nucleopolyhedrovirus in mass-reared silkworms in Thailand. *Journal of Invertebrate Pathology* , xxx xxx xxx. [DOI link to the publication]
+-   **Wennmann, J.T., Senger, S., Ruoff, B., Jehle, J.A., Suraporn, S. (accepted for publication).** Distribution and genetic deviersity of Bombyx mori nucleopolyhedrovirus in mass-reared silkworms in Thailand. *Journal of Invertebrate Pathology*, <https://doi.org/10.1016/j.jip.2024.108221>.
 
 ## Aim of this repository
 
