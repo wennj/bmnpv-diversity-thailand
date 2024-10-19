@@ -21,6 +21,7 @@ library(RColorBrewer)
 library(stringr)
 library(devtools)
 library(VariantAnnotation)
+library(reshape2)
 library(patchwork)
 
 '%ni%' <- Negate('%in%')
@@ -416,7 +417,7 @@ print(combined_plot)
 
 f <- 1.2
 # Speichern des kombinierten Plots als PDF
-ggsave("output/cds analysis/k2p_combined_ALL.png", combined_plot, width = 8*f+3, height = 10*f+4)
+ggsave("output/cds analysis/k2p_combined_ALL.png", combined_plot, width = 8*f+3, height = 10*f+4, dpi = 1000)
 ```
 
 

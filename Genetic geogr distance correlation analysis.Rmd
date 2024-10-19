@@ -209,7 +209,7 @@ p <- ggplot(combos, aes(x = geo_dist, y = genetic_dist)) +
         panel.border = element_rect(colour = "black", fill= NA, linewidth = 1),
         legend.position = "none")
 
-dpi <- 300
+dpi <- 1000
 f <- 1.5
 
 #default
