@@ -74,6 +74,10 @@ The alignments of all 138 CDSs of the fully sequenced genomes also allowed the g
 
 ## 
 
-# A Galaxy-Workflow for extracting homologous ORFs
+## A Galaxy-Workflow for extracting homologous ORFs
+
+Next is a figure of a workflow that can be run on a Galaxy server (usegalaxy.org, usegalaxy.eu). Two inputs are required: (i) BmNPV genomes in FASTA format and (ii) a FASTA file with all CDS of a singe BmNPV (extracted from gff3 or genbank file). During this workflow, homologous genes are searched using Blast and combined with each other. In the last step, all homologous genes are aligned and concatenated. Based on resulting data, a phylogenetic tree can then be constructed or genetic distanced be calculated (see above).
+
+[The Galaxy workflow file can be found here.](https://github.com/wennj/bmnpv-map-thailand/blob/main/data/galaxy_workflow/galaxy_workflow_file)
 
 ![](data/galaxy_workflow/workflow_CDS_detection.png)
