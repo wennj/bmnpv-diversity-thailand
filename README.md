@@ -2,13 +2,15 @@
 
 The figures and content in this repository are derived from the following publication:
 
--   **Wennmann, J.T., Senger, S., Ruoff, B., Jehle, J.A., Suraporn, S. (accepted for publication).** Distribution and genetic deviersity of Bombyx mori nucleopolyhedrovirus in mass-reared silkworms in Thailand. *Journal of Invertebrate Pathology*, <https://doi.org/10.1016/j.jip.2024.108221>.
+-   **Wennmann, J.T., Senger, S., Ruoff, B., Jehle, J.A., Suraporn, S. (2024).** Distribution and genetic deviersity of Bombyx mori nucleopolyhedrovirus in mass-reared silkworms in Thailand. *Journal of Invertebrate Pathology*, <https://doi.org/10.1016/j.jip.2024.108221>.
 
 ## Aim of this repository
 
 -   Demonstration of the R code for creating a map of Thailand to mark sampling sites of baculovirus samples.
 
 -   Learn how R can be used to analyse the correlation between geographical and genetic distance.
+
+-   Provide a Galaxy workflow to extract BmNPV homologous genes from BmNPV genome sequences.
 
 ## Map of Thailand
 
@@ -69,3 +71,9 @@ The alignments of all 138 CDSs of the fully sequenced genomes also allowed the g
 <img src="output/cds analysis/k2p_combined_ALL.png" alt="Full Map of Thailand" width="100%"/>
 
 </details>
+
+## 
+
+# A Galaxy-Workflow for extracting homologous ORFs
+
+![](data/galaxy_workflow/workflow_CDS_detection.png)
